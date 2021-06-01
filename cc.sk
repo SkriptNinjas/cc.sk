@@ -1,0 +1,79 @@
+command /cc <text> [<player>]:
+	permission: mod.gui
+	trigger:
+		if arg 1 is "v":
+			if arg 2 is set:
+				send "&6[CheckCheat] &fLancement Du test, veuiller patienter" to sender
+				set {location1.check.%arg 2%} to argument-player's location
+				set {kb.test.%argument-player%} to true
+				push the argument-player upwards at speed 1
+				wait 5 ticks	
+				set {location2.check.%arg 2%} to argument-player's location
+				if {location1.check.%arg 2%} = {location2.check.%arg 2%}:
+					send "&6[CheckCheat] &b%argument-player% &7>> &fRésultats: &bANTI-KB DETECTED &6(%argument-player's ping% ms)" to sender
+				else:
+					send "&6[CheckCheat] &b%argument-player% &7>> &fRésultats: &bNOTHING &6(%argument-player's ping% ms)" to sender
+				wait 1 seconds
+				set {kb.test.%argument-player%} to false
+			else:
+				send "&6[CheckCheat] &fPrécise Un Joueur" to sender
+		if arg 1 is "c" or "cps":
+			if arg 2 is set:
+				send "&6[CheckCheat] &fLancement Du test, veuiller patienter" to sender
+				set {clicks.%arg 2%} to 0
+				set {click.%arg 2%} to true
+				wait 1.5 seconds
+				send "&6[CheckCheat] &b%arg 2% &7>> &fRésultats: &b%{clicks.%arg 2%}% &fCLICK !" to sender
+				set {click.%arg 2%} to false
+			else:
+				send "&6[CheckCheat] &fPrécise Un Joueur" to sender
+		if arg 1 is "t":		
+			if {vn.%player%} is true:
+				if {mod.%player%} is false:
+					set {inventaire.%player%} to player's inventory
+					set {exemple.%uuid of player%::inventaire} to serialized contents of player's inventory #Sauvegarde l'inventaire du joueur
+					set {exemple.%uuid of player%::casque} to helmet of player #Sauvegarde le casque du joueur
+					set {exemple.%uuid of player%::plastron} to chestplate of player #Sauvegarde le plastron du joueur
+					set {exemple.%uuid of player%::pantalon} to leggings of player #Sauvegarde les jambières du joueur
+					set {exemple.%uuid of player%::bottes} to boots of player #Sauvegarde les bottes du joueur
+					set {mod.%player%} to true
+					message "&5Tools: &aON"
+					set {vanishset.%player%} to true
+					hide player from all players
+					make console execute command "/gmc %player%"
+					clear player's inventory
+					set slot 1 of player's inventory to iron hoe named "&f&o(Vanish Mode: 10 Ticks)"
+					set slot 2 of player's inventory to iron hoe named "&f&o(Devanish Mode: 10 Ticks)"
+					set slot 3 of player's inventory to golden sword named "&bEpée KB I"
+					set slot 4 of player's inventory to clock named "&6TopLuck"
+					set slot 5 of player's inventory to wooden sword of knockback 2 named "Epée KB II"
+					set slot 6 of player's inventory to wooden sword of knockback 10 named "Epée KB X"
+					set slot 7 of player's inventory to diamond pickaxe named "&bPioche III"
+			else:
+				send "&dTu n'est pas en /mod"
+
+command /staff:
+	permission: mod.gui
+	trigger:
+		if {vn.%player%} is true:
+			set {vn.%player%} to false
+			send "&5Modération: &cOFF" to player
+			reveal player from all players
+			make console execute command "/gms %player%"
+			clear player's inventory
+			give {inventaire.%player%} to player
+			set player's inventory's serialized contents to {exemple.%uuid of player%::inventaire}
+			set helmet of player to {exemple.%uuid of player%::casque}
+			set chestplate of player to {exemple.%uuid of player%::plastron}
+			set leggings of player to {exemple.%uuid of player%::pantalon}
+			set boots of player to {exemple.%uuid of player%::bottes}
+			set {mod.%player%} to false
+			message "&5Tools: &cOFF"
+			make console execute command "/gms %player%"
+			set {vanishset.%player%} to false
+			reveal player from all players
+		else:
+			set {vn.%player%} to true
+			send "&5Modération: &aON" to player
+			hide player from all players
+			make console execute command "/gmsp %player%"
